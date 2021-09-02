@@ -1,5 +1,12 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {View, Dimensions, StyleSheet, Animated, Switch} from 'react-native';
+import {
+  View,
+  useWindowDimensions,
+  StyleSheet,
+  Animated,
+  transform,
+  Switch,
+} from 'react-native';
 import Background from './images/background.svg';
 import Background2 from './images/back2.svg';
 import Rock from './images/rock.svg';
@@ -23,16 +30,24 @@ import Front12 from './images/front12.svg';
 import Front11 from './images/front11.svg';
 import Window2 from './images/window2.svg';
 import Stars from './images/stars.svg';
+import Moon from './images/moon.svg';
+import Comet from './images/comet.svg';
 
 export const App = () => {
+  const xCoord = useRef(new Animated.Value(0)).current;
+  const yCoord = useRef(new Animated.Value(0)).current;
+  const {width, height} = useWindowDimensions();
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => {
     if (isEnabled === false) {
-      setIsEnabled(true);
       fadeOut();
+      setIsEnabled(true);
+      cloudAnimation();
+      sunAnimation();
     } else {
-      setIsEnabled(false);
       fadeIn();
+      setIsEnabled(false);
+      sunAnimationBack();
     }
   };
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -49,16 +64,54 @@ export const App = () => {
   const fadeOut = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
-      duration: 3000,
+      duration: 5000,
       isEnabled: false,
       useNativeDriver: true,
     }).start();
   };
+
+  const sunAnimation = () => {
+    Animated.timing(xCoord, {
+      toValue: width - 200,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(yCoord, {
+      toValue: height - 1200,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  };
+  const sunAnimationBack = () => {
+    Animated.timing(xCoord, {
+      toValue: width - 390,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(yCoord, {
+      toValue: height - 840,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  };
+  const cloudAnimation = () => {
+    Animated.timing(xCoord, {
+      toValue: width + 1000,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  };
+  const transform = [{translateX: xCoord}, {translateY: yCoord}];
   return (
     <View>
       <View style={styles.back2}>
         <Background2 style={styles.back2} />
         <Stars style={styles.stars} />
+        <Animated.View style={[styles.moon, {transform}]}>
+          <Moon />
+        </Animated.View>
         <House style={styles.house2} />
         <Window2 style={styles.window2} />
         <Mountain2 style={(styles.mountain, styles.mountain2Margin)} />
@@ -68,6 +121,13 @@ export const App = () => {
       </View>
       <Animated.View style={(styles.back, {opacity: fadeAnim})}>
         <Background style={styles.back}></Background>
+        <Animated.View
+          style={[styles.clouds, {transform: [{translateX: xCoord}]}]}>
+          <Clouds />
+        </Animated.View>
+        <Animated.View style={[styles.sun, {transform}]}>
+          <Sun />
+        </Animated.View>
         <House style={styles.house} />
         <Window style={styles.window} />
         <Mountain style={styles.mountain} />
@@ -75,8 +135,6 @@ export const App = () => {
         <Front2 style={styles.front2} />
         <Front1 style={styles.front1} />
       </Animated.View>
-      <Clouds style={styles.clouds} />
-      <Sun style={styles.sun} />
       <Front style={styles.front} />
       <MountainTexture2 style={styles.mountainTexture2} />
       <RockTree style={styles.rockTree} />
@@ -105,75 +163,58 @@ const styles = StyleSheet.create({
   },
   back: {
     position: 'relative',
-    height: 875,
-    width: 525,
   },
   back2: {
     position: 'absolute',
     marginLeft: -30,
-    height: 875,
-    width: 525,
   },
   rock: {
     position: 'absolute',
     marginLeft: 148,
     marginTop: 485,
-    height: 360,
-    width: 270,
   },
   rockTexture: {
     position: 'absolute',
     marginLeft: 146,
     marginTop: 509,
-    height: 272,
-    width: 198,
   },
   house: {
     position: 'absolute',
     marginLeft: 223,
     marginTop: 456,
-    height: 85,
-    width: 83,
   },
   house2: {
     position: 'absolute',
     marginLeft: 253,
     marginTop: 456,
-    height: 85,
-    width: 83,
   },
   window: {
     position: 'absolute',
     marginLeft: 250,
     marginTop: 473,
-    height: 18,
-    width: 18,
   },
   window2: {
     position: 'absolute',
     marginLeft: 280,
     marginTop: 473,
-    height: 18,
-    width: 18,
   },
   sun: {
     position: 'absolute',
-    height: 105,
-    width: 105,
     marginTop: 400,
     marginLeft: 90,
+  },
+  moon: {
+    position: 'absolute',
+    marginTop: 660,
+    marginLeft: -30,
   },
   front: {
     position: 'absolute',
     marginTop: 601,
-    width: 440,
-    height: 300,
   },
   front1: {
     position: 'absolute',
     marginTop: 570,
-    width: 360,
-    height: 350,
   },
   front11: {
     position: 'absolute',
@@ -186,8 +227,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: 533,
     marginLeft: 32,
-    width: 353,
-    height: 350,
   },
   front12: {
     position: 'absolute',
@@ -199,8 +238,6 @@ const styles = StyleSheet.create({
   front3: {
     position: 'absolute',
     marginTop: 570,
-    width: 180,
-    height: 250,
   },
   front13Margin: {
     position: 'absolute',
@@ -212,8 +249,6 @@ const styles = StyleSheet.create({
   mountain: {
     position: 'absolute',
     marginTop: 545,
-    width: 289,
-    height: 189,
   },
   mountain2Margin: {
     marginLeft: 30,
@@ -225,8 +260,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: 542,
     marginLeft: 17,
-    height: 130,
-    width: 140,
   },
   mountainTexture2: {
     position: 'absolute',
@@ -239,15 +272,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: 347,
     marginLeft: 247,
-    height: 160,
-    width: 220,
   },
   clouds: {
     position: 'absolute',
     marginTop: 100,
     marginLeft: -173,
-    height: 210,
-    width: 775,
   },
   frontTrees: {
     position: 'absolute',
@@ -257,8 +286,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: 35,
     marginLeft: -50,
-    width: 555,
-    height: 350,
+  },
+  comet: {
+    position: 'absolute',
+    marginTop: 400,
+    marginLeft: 90,
   },
 });
 
