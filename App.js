@@ -42,7 +42,6 @@ export const App = () => {
     if (isEnabled === false) {
       fadeOut();
       setIsEnabled(true);
-      cloudAnimation();
       sunAnimation();
     } else {
       fadeIn();
@@ -96,13 +95,7 @@ export const App = () => {
       useNativeDriver: true,
     }).start();
   };
-  const cloudAnimation = () => {
-    Animated.timing(xCoord, {
-      toValue: width + 1000,
-      duration: 5000,
-      useNativeDriver: true,
-    }).start();
-  };
+
   const transform = [{translateX: xCoord}, {translateY: yCoord}];
   return (
     <View>
@@ -111,6 +104,13 @@ export const App = () => {
         <Stars style={styles.stars} />
         <Animated.View style={[styles.moon, {transform}]}>
           <Moon />
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.comet,
+            {transform: [{translateX: yCoord, translateY: xCoord}]},
+          ]}>
+          <Comet />
         </Animated.View>
         <House style={styles.house2} />
         <Window2 style={styles.window2} />
@@ -289,8 +289,8 @@ const styles = StyleSheet.create({
   },
   comet: {
     position: 'absolute',
-    marginTop: 400,
-    marginLeft: 90,
+    marginTop: 180,
+    marginLeft: 450,
   },
 });
 
