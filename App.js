@@ -4,7 +4,6 @@ import {
   useWindowDimensions,
   StyleSheet,
   Animated,
-  transform,
   Switch,
 } from 'react-native';
 import Background from './images/background.svg';
@@ -150,6 +149,7 @@ export const App = () => {
         onValueChange={toggleSwitch}
         value={isEnabled}
       />
+      <Animated.View style={styles.round} />
     </View>
   );
 };
@@ -291,6 +291,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: 180,
     marginLeft: 450,
+  },
+  round: {
+    position: 'absolute',
+    height: 20,
+    width: 20,
+    marginTop: 45,
+    marginLeft: 360,
+    borderRadius: 11,
+    backgroundColor: '#27173A',
   },
 });
 
